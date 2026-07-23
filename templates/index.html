@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Target Monitor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main id="login-view" class="auth-shell">
+      <section class="auth-card">
+        <p class="eyebrow">BUG BOUNTY INTELLIGENCE</p>
+        <h1>Target Monitor</h1>
+        <p class="muted">Sign in to monitor your authorized scope feeds.</p>
+        <form id="login-form" class="stack">
+          <label>Username<input id="username" autocomplete="username" required /></label>
+          <label>Password<input id="password" type="password" autocomplete="current-password" required /></label>
+          <p id="login-error" class="form-error" role="alert"></p>
+          <button type="submit">Sign in</button>
+        </form>
+      </section>
+    </main>
+
+    <main id="app-view" class="app-shell hidden">
+      <aside class="sidebar">
+        <div>
+          <p class="eyebrow">BUG BOUNTY INTELLIGENCE</p>
+          <h1>Target<br />Monitor</h1>
+        </div>
+        <div class="sidebar-foot">
+          <span id="connection-state" class="status-dot">Connecting</span>
+          <button id="logout-button" class="secondary">Log out</button>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">LIVE DASHBOARD</p>
+            <h2>Scope changes</h2>
+          </div>
+          <button id="refresh-button" class="secondary">Refresh</button>
+        </header>
+
+        <div id="toast" class="toast hidden" role="status"></div>
+
+        <section class="stat-grid" aria-label="Monitor statistics">
+          <article class="stat-card"><span>Active targets</span><strong id="active-targets">—</strong></article>
+          <article class="stat-card"><span>Enabled feeds</span><strong id="enabled-platforms">—</strong></article>
+          <article class="stat-card"><span>Changes today</span><strong id="today-count">—</strong></article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">CONNECTIONS</p>
+              <h3>Authorized platform feeds</h3>
+            </div>
+            <span class="muted">Keys are encrypted at rest</span>
+          </div>
+          <div id="platform-list" class="platform-list"><p class="muted">Loading connections…</p></div>
+        </section>
+
+        <section class="two-column">
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">ADD CONNECTION</p>
+                <h3>HackerOne scope feed</h3>
+              </div>
+            </div>
+            <p class="note">Use an HTTPS JSON scope endpoint or a public/authorized HackerOne program page. HackerOne API credentials are optional for public feeds, and required for protected feeds.</p>
+            <form id="platform-form" class="stack compact">
+              <label>Connection name<input name="name" placeholder="HackerOne – GitLab" required maxlength="80" /></label>
+              <label>Program name<input name="program_name" placeholder="GitLab" required maxlength="160" /></label>
+              <label>Permitted scope URL<input name="endpoint" type="url" placeholder="https://…" required /></label>
+              <div class="form-grid">
+                <label>API token identifier<input name="credential_identifier" autocomplete="off" /></label>
+                <label>API token<input name="credential_token" type="password" autocomplete="new-password" /></label>
+              </div>
+              <label>Check interval (seconds)<input name="poll_interval_seconds" type="number" min="60" max="86400" value="300" required /></label>
+              <p id="platform-error" class="form-error" role="alert"></p>
+              <button type="submit">Save connection</button>
+            </form>
+          </section>
+
+          <section class="panel event-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">LATEST</p>
+                <h3>Detected changes</h3>
+              </div>
+              <span class="muted">Most recent 20</span>
+            </div>
+            <div id="event-list" class="event-list"><p class="muted">No changes yet.</p></div>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script src="/static/app.js?v=2" defer></script>
+  </body>
+</html>

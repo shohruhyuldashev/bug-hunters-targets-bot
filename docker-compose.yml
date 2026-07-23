@@ -1,0 +1,42 @@
+services:
+  target-monitor:
+    build: .
+    env_file: .env
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    restart: unless-stopped
+    depends_on:
+      target-monitor:
+        condition: service_healthy
+    volumes:
+      # Mini App'dan yuklab olingan config fayl shu yerda bo'lishi kerak
+      - ./agent-config.json:/config/agent.json:ro
+      # Agent o'z state'ini saqlab qolishi uchun
+      - ./data/agent-state:/config:rw
+    networks:
+      - default
+    # Config fayl yo'q bo'lsa — xatolik chiqarish o'rniga kutamiz
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ ! -f /config/agent.json ]; then
+          echo "⚠️  /config/agent.json topilmadi!"
+          echo "   Mini App'dan config yuklab: ./agent-config.json ga qo'ying"
+          echo "   Keyin: docker compose restart agent"
+          sleep infinity
+        fi
+        exec python agent.py --config /config/agent.json

@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/*.sqlite3
+data/*.sqlite3-*
+data/*.db
+data/*.db-*
+target-monitor-agent.json
+agent-config.json
+*.state.json
+data/agent-state/

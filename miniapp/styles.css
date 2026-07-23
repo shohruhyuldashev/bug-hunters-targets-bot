@@ -1,0 +1,774 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TELEGRAM NATIVE DESIGN SYSTEM (BotFather Style Mini App)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Telegram Web App Theme Colors & Fallbacks */
+  --tg-bg: var(--tg-theme-bg-color, #17212b);
+  --tg-sec-bg: var(--tg-theme-secondary-bg-color, #0e1621);
+  --tg-text: var(--tg-theme-text-color, #f5f5f5);
+  --tg-hint: var(--tg-theme-hint-color, #7f91a4);
+  --tg-link: var(--tg-theme-link-color, #64b5ef);
+  --tg-btn: var(--tg-theme-button-color, #5288c1);
+  --tg-btn-text: var(--tg-theme-button-text-color, #ffffff);
+
+  /* Custom Color Tokens */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --divider-color: rgba(255, 255, 255, 0.06);
+  --input-bg: var(--tg-sec-bg);
+  --card-bg: var(--tg-sec-bg);
+  --card-radius: 12px;
+  
+  /* Platform Colors */
+  --h1-color: #eb1600;
+  --it-color: #00d285;
+  --ywh-color: #ff5722;
+  --bc-color: #fd9b00;
+
+  color-scheme: dark light;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--tg-bg);
+  color: var(--tg-text);
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ─── APP SHELL ─────────────────────────────────────────────────────────── */
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 16px;
+  background-color: var(--tg-bg);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--tg-link);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: -8px;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  width: 32px;
+}
+
+.view-root {
+  flex: 1;
+  padding: 16px;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ─── SECTION GROUPS (Telegram Card Style) ──────────────────────────────── */
+
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--tg-hint);
+  padding-left: 12px;
+}
+
+.section-card {
+  background-color: var(--card-bg);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.cell-divider {
+  height: 1px;
+  background-color: var(--divider-color);
+  margin-left: 16px;
+}
+
+.section-footer {
+  font-size: 13px;
+  color: var(--tg-hint);
+  padding: 4px 12px 0 12px;
+  line-height: 1.4;
+}
+
+.view-intro {
+  font-size: 14px;
+  color: var(--tg-hint);
+  margin-bottom: 4px;
+}
+
+/* ─── HERO & CONSENT ────────────────────────────────────────────────────── */
+
+.consent-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 0 12px 0;
+}
+
+.hero-icon {
+  margin-bottom: 12px;
+}
+
+.consent-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.consent-subtitle {
+  font-size: 14px;
+  color: var(--tg-link);
+  font-weight: 500;
+}
+
+.feature-cell {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 14px;
+}
+
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.feature-icon.shield { background: linear-gradient(135deg, #2b5278, #5288c1); }
+.feature-icon.storage { background: linear-gradient(135deg, #2ea44f, #34d058); }
+.feature-icon.agent { background: linear-gradient(135deg, #8a2be2, #a855f7); }
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.feature-desc {
+  font-size: 13px;
+  color: var(--tg-hint);
+}
+
+/* ─── BANNERS & STATUS ──────────────────────────────────────────────────── */
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #eac54f;
+  box-shadow: 0 0 8px rgba(234, 197, 79, 0.4);
+}
+
+.status-banner.ready .status-dot {
+  background-color: #34c759;
+  box-shadow: 0 0 8px rgba(52, 199, 89, 0.4);
+}
+
+.error-banner {
+  background-color: rgba(255, 59, 48, 0.12);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #ff453a;
+  padding: 12px 16px;
+  border-radius: var(--card-radius);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ─── STATS ROW ─────────────────────────────────────────────────────────── */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tg-link);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--tg-hint);
+  font-weight: 500;
+}
+
+/* ─── NAVIGATION CELLS ─────────────────────────────────────────────────── */
+
+.nav-cell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  color: var(--tg-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  gap: 14px;
+  transition: background-color 0.15s ease;
+}
+
+.nav-cell:active {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.nav-icon.add { background-color: var(--tg-link); }
+.nav-icon.list { background-color: #34c759; }
+.nav-icon.download { background-color: #af52de; }
+
+.nav-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.nav-desc {
+  font-size: 13px;
+  color: var(--tg-hint);
+}
+
+.chevron {
+  color: var(--tg-hint);
+  opacity: 0.6;
+}
+
+/* ─── PLATFORM SELECTOR GRID ────────────────────────────────────────────── */
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.platform-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.platform-card:active {
+  transform: scale(0.97);
+}
+
+.platform-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: white;
+}
+
+.h1-logo { background: linear-gradient(135deg, #eb1600, #ff5252); }
+.it-logo { background: linear-gradient(135deg, #00b074, #00e699); }
+.ywh-logo { background: linear-gradient(135deg, #e64a19, #ff7043); }
+.bc-logo { background: linear-gradient(135deg, #e65100, #ff9800); }
+
+.platform-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.platform-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.h1-badge { background: rgba(235, 22, 0, 0.15); color: #ff5252; }
+.it-badge { background: rgba(0, 210, 133, 0.15); color: #00e699; }
+.ywh-badge { background: rgba(255, 87, 34, 0.15); color: #ff7043; }
+.bc-badge { background: rgba(253, 155, 0, 0.15); color: #ffb74d; }
+
+.info-card {
+  padding: 12px 16px;
+}
+
+.info-text {
+  font-size: 13px;
+  color: var(--tg-hint);
+  line-height: 1.4;
+}
+
+/* ─── FORM & INPUTS ─────────────────────────────────────────────────────── */
+
+.selected-platform-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+}
+
+.sp-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: white;
+}
+
+.sp-name {
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.sp-change {
+  background: none;
+  border: none;
+  color: var(--tg-link);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tg-hint);
+}
+
+.optional-badge {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.form-field input[type="text"],
+.form-field input[type="url"],
+.form-field input[type="password"],
+.form-field input[type="number"] {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--tg-text);
+  font-size: 16px;
+  font-family: inherit;
+  padding: 4px 0;
+}
+
+.form-field input::placeholder {
+  color: var(--tg-hint);
+  opacity: 0.5;
+  font-size: 14px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--tg-hint);
+  margin-top: 2px;
+}
+
+.password-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-pw {
+  background: none;
+  border: none;
+  color: var(--tg-hint);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.interval-field {
+  padding-bottom: 12px;
+}
+
+.interval-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interval-unit {
+  font-size: 15px;
+  color: var(--tg-hint);
+}
+
+/* ─── PROGRAM LIST ITEM ─────────────────────────────────────────────────── */
+
+.program-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 14px;
+}
+
+.program-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.program-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.program-title {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.program-meta {
+  font-size: 12px;
+  color: var(--tg-hint);
+}
+
+.program-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.program-edit-btn,
+.program-del-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.program-edit-btn {
+  color: var(--tg-link, #2481cc);
+}
+
+.program-del-btn {
+  color: #ff453a;
+}
+
+.program-edit-btn:active,
+.program-del-btn:active {
+  opacity: 0.4;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  gap: 8px;
+}
+
+.empty-icon {
+  color: var(--tg-hint);
+  opacity: 0.4;
+  margin-bottom: 8px;
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.empty-desc {
+  font-size: 14px;
+  color: var(--tg-hint);
+  max-width: 280px;
+}
+
+/* ─── STEPS & DOWNLOAD ──────────────────────────────────────────────────── */
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  padding: 14px 16px;
+}
+
+.step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--tg-btn);
+  color: var(--tg-btn-text);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step-desc {
+  font-size: 13px;
+  color: var(--tg-hint);
+}
+
+.step-desc code {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--tg-text);
+}
+
+.download-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 14px 0;
+}
+
+.dl-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dl-stat strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--tg-link);
+}
+
+.dl-stat span {
+  font-size: 12px;
+  color: var(--tg-hint);
+}
+
+.dl-sep {
+  width: 1px;
+  height: 32px;
+  background-color: var(--divider-color);
+}
+
+/* ─── BUTTONS ───────────────────────────────────────────────────────────── */
+
+.bottom-action {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.main-btn {
+  width: 100%;
+  height: 50px;
+  border-radius: var(--card-radius);
+  background-color: var(--tg-btn);
+  color: var(--tg-btn-text);
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.main-btn:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+.ghost-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--card-radius);
+  background: transparent;
+  color: #ff453a;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ghost-btn:active {
+  background-color: rgba(255, 69, 58, 0.08);
+}

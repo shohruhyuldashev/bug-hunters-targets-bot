@@ -1,0 +1,17 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Faqat agent uchun kerakli paketlar (yengil)
+RUN pip install --no-cache-dir aiohttp==3.11.* beautifulsoup4==4.12.*
+
+COPY client_agent/agent.py ./agent.py
+
+RUN useradd --create-home --uid 10002 agent && chown -R agent:agent /app
+USER agent
+
+# Config fayl /config/agent.json sifatida mount qilinadi
+CMD ["python", "agent.py", "--config", "/config/agent.json"]

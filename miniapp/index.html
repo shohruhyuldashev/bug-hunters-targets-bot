@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; script-src 'self' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'" />
+    <title>Target Monitor</title>
+    <link rel="stylesheet" href="./styles.css?v=4" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+
+    <!-- ═══ APP SHELL ═══════════════════════════════════════════════════════ -->
+    <div id="app">
+
+      <!-- Top header -->
+      <header id="app-header" class="app-header hidden">
+        <button id="back-btn" class="back-btn hidden" aria-label="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <h1 id="header-title" class="header-title"></h1>
+        <div class="header-right"></div>
+      </header>
+
+      <!-- View container -->
+      <div id="view-root" class="view-root">
+
+        <!-- ─── VIEW: CONSENT ─────────────────────────────────────────── -->
+        <div id="view-consent" class="view active">
+          <div class="consent-hero">
+            <div class="hero-icon">
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <rect width="56" height="56" rx="16" fill="var(--tg-btn,#2b5278)"/>
+                <path d="M28 14c-3.866 0-7 3.134-7 7v3H18a2 2 0 00-2 2v12a2 2 0 002 2h20a2 2 0 002-2V26a2 2 0 00-2-2h-3v-3c0-3.866-3.134-7-7-7zm0 3c2.21 0 4 1.79 4 4v3H24v-3c0-2.21 1.79-4 4-4zm0 11a2 2 0 110 4 2 2 0 010-4z" fill="white"/>
+              </svg>
+            </div>
+            <h2 class="consent-title">Target Monitor</h2>
+            <p class="consent-subtitle">Private Setup</p>
+          </div>
+
+          <div class="section-group">
+            <div class="section-card">
+              <div class="feature-cell">
+                <div class="feature-icon shield">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3z"/>
+                  </svg>
+                </div>
+                <div class="feature-text">
+                  <span class="feature-label">Zero-knowledge design</span>
+                  <span class="feature-desc">API keys never leave your device</span>
+                </div>
+              </div>
+              <div class="cell-divider"></div>
+              <div class="feature-cell">
+                <div class="feature-icon storage">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 6H4c-1.11 0-2 .89-2 2v8c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5 8v-2h-6V8h6v2h2V8h2v8h-2v-2h-2z"/>
+                  </svg>
+                </div>
+                <div class="feature-text">
+                  <span class="feature-label">Encrypted Server Vault</span>
+                  <span class="feature-desc">Fernet 256-bit encryption</span>
+                </div>
+              </div>
+              <div class="cell-divider"></div>
+              <div class="feature-cell">
+                <div class="feature-icon agent">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                  </svg>
+                </div>
+                <div class="feature-text">
+                  <span class="feature-label">24/7 Automated Cloud Monitor</span>
+                  <span class="feature-desc">Instant Telegram notifications</span>
+                </div>
+              </div>
+            </div>
+            <p class="section-footer">
+              Tapping <strong>Allow &amp; Continue</strong> connects your Telegram account for 24/7 automated bug bounty target monitoring.
+            </p>
+          </div>
+
+          <div id="consent-error" class="error-banner hidden"></div>
+
+          <div class="bottom-action">
+            <button id="allow-btn" class="main-btn">Allow &amp; Continue</button>
+          </div>
+        </div>
+
+        <!-- ─── VIEW: HOME ─────────────────────────────────────────────── -->
+        <div id="view-home" class="view hidden">
+
+          <!-- Agent status banner -->
+          <div id="agent-status" class="status-banner">
+            <div class="status-dot"></div>
+            <span id="status-text">Connecting to relay…</span>
+          </div>
+
+          <!-- Stats row -->
+          <div id="stats-row" class="stats-row hidden">
+            <div class="stat-card">
+              <span class="stat-num" id="stat-connections">0</span>
+              <span class="stat-label">Programs</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num" id="stat-platforms">0</span>
+              <span class="stat-label">Platforms</span>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="section-group">
+            <div class="section-label">MONITORING</div>
+            <div class="section-card">
+              <button class="nav-cell" id="btn-add-program">
+                <div class="nav-icon add">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                </div>
+                <div class="nav-text">
+                  <span class="nav-label">Add Program</span>
+                  <span class="nav-desc">Connect a new bug bounty platform</span>
+                </div>
+                <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="cell-divider"></div>
+              <button class="nav-cell" id="btn-my-programs">
+                <div class="nav-icon list">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                  </svg>
+                </div>
+                <div class="nav-text">
+                  <span class="nav-label">My Programs</span>
+                  <span class="nav-desc" id="programs-count-hint">No saved connections</span>
+                </div>
+                <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+
+
+        </div><!-- /view-home -->
+
+        <!-- ─── VIEW: PLATFORM SELECTOR ───────────────────────────────── -->
+        <div id="view-platforms" class="view hidden">
+          <div class="section-group">
+            <p class="view-intro">Select the bug bounty platform where your target program is hosted.</p>
+          </div>
+
+          <div class="platform-grid">
+            <button class="platform-card" data-platform="hackerone">
+              <div class="platform-logo h1-logo">H1</div>
+              <span class="platform-name">HackerOne</span>
+              <span class="platform-badge h1-badge">Popular</span>
+            </button>
+            <button class="platform-card" data-platform="intigriti">
+              <div class="platform-logo it-logo">IN</div>
+              <span class="platform-name">Intigriti</span>
+              <span class="platform-badge it-badge">EU</span>
+            </button>
+            <button class="platform-card" data-platform="yeswehack">
+              <div class="platform-logo ywh-logo">YW</div>
+              <span class="platform-name">YesWeHack</span>
+              <span class="platform-badge ywh-badge">FR</span>
+            </button>
+            <button class="platform-card" data-platform="bugcrowd">
+              <div class="platform-logo bc-logo">BC</div>
+              <span class="platform-name">Bugcrowd</span>
+              <span class="platform-badge bc-badge">US</span>
+            </button>
+          </div>
+
+          <div class="section-group">
+            <div class="section-card info-card">
+              <p class="info-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                Your API credentials are <strong>never sent</strong> to the server. They stay encrypted on this device.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── VIEW: ADD FORM ────────────────────────────────────────── -->
+        <div id="view-form" class="view hidden">
+          <form id="connection-form" novalidate>
+
+            <!-- Platform indicator -->
+            <div class="selected-platform-bar" id="selected-platform-bar">
+              <div class="sp-logo" id="sp-logo"></div>
+              <span id="sp-name" class="sp-name"></span>
+              <button type="button" class="sp-change" id="sp-change-btn">Change</button>
+            </div>
+
+            <div class="section-group" id="program-section-group">
+              <div class="section-label">PROGRAM</div>
+              <div class="section-card form-card">
+                <div class="form-field">
+                  <label class="field-label" for="f-program">Program name</label>
+                  <input id="f-program" name="program" type="text" maxlength="160"
+                    placeholder="e.g. GitLab" required autocomplete="off" />
+                </div>
+                <div class="cell-divider"></div>
+                <div class="form-field">
+                  <label class="field-label" for="f-endpoint">Scope API endpoint</label>
+                  <input id="f-endpoint" name="endpoint" type="url"
+                    placeholder="https://…" required autocomplete="off" />
+                  <span id="endpoint-hint" class="field-hint"></span>
+                </div>
+                <div class="cell-divider"></div>
+                <div class="form-field">
+                  <label class="field-label" for="f-details">Details JSON URL <span class="optional-badge">optional</span></label>
+                  <input id="f-details" name="details_endpoint" type="url"
+                    placeholder="https://… (leave blank to use scope URL)" autocomplete="off" />
+                </div>
+              </div>
+            </div>
+
+            <div class="section-group">
+              <div class="section-label" id="auth-section-label">AUTHENTICATION</div>
+              <div class="section-card form-card">
+                <div class="form-field" id="field-identifier">
+                  <label class="field-label" for="f-identifier" id="label-identifier">API identifier</label>
+                  <input id="f-identifier" name="identifier" type="text"
+                    maxlength="255" autocomplete="off" />
+                </div>
+                <div class="cell-divider" id="divider-identifier"></div>
+                <div class="form-field">
+                  <label class="field-label" for="f-token" id="label-token">API token / Secret</label>
+                  <div class="password-wrap">
+                    <input id="f-token" name="token" type="password"
+                      maxlength="2000" autocomplete="new-password" />
+                    <button type="button" class="toggle-pw" id="toggle-pw" aria-label="Show token">
+                      <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <p id="auth-hint" class="section-footer"></p>
+            </div>
+
+            <div class="section-group">
+              <div class="section-label">SCHEDULE</div>
+              <div class="section-card form-card">
+                <div class="form-field interval-field">
+                  <label class="field-label" for="f-interval">Check interval</label>
+                  <div class="interval-wrap">
+                    <input id="f-interval" name="interval" type="number"
+                      value="300" min="60" max="86400" required />
+                    <span class="interval-unit">seconds</span>
+                  </div>
+                  <span class="field-hint">Minimum 60 s · Recommended 300 s (5 min)</span>
+                </div>
+              </div>
+            </div>
+
+            <input type="hidden" name="platform" id="f-platform" />
+            <div id="form-error" class="error-banner hidden" role="alert"></div>
+
+            <div class="bottom-action">
+              <button type="submit" class="main-btn">Save on this device</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ─── VIEW: MY PROGRAMS ─────────────────────────────────────── -->
+        <div id="view-programs" class="view hidden">
+          <div id="programs-list-wrap">
+            <div class="empty-state" id="empty-programs">
+              <div class="empty-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </div>
+              <p class="empty-title">No programs yet</p>
+              <p class="empty-desc">Add your first bug bounty program connection to start monitoring.</p>
+            </div>
+            <div id="programs-list" class="section-group"></div>
+          </div>
+          <div class="bottom-action" id="programs-actions" style="display:none">
+            <button id="btn-add-from-list" class="main-btn">Add Another Program</button>
+            <button id="btn-clear-all" class="ghost-btn">Remove All</button>
+          </div>
+        </div><!-- /view-programs -->
+
+        <!-- ─── VIEW: EDIT PROGRAM ────────────────────────────────────── -->
+        <div id="view-edit" class="view hidden">
+          <form id="edit-form" novalidate>
+            <div class="selected-platform-bar" id="edit-platform-bar">
+              <div class="sp-logo" id="edit-sp-logo"></div>
+              <span id="edit-sp-name" class="sp-name"></span>
+            </div>
+
+            <div class="section-group">
+              <div class="section-label">AUTHENTICATION</div>
+              <div class="section-card form-card">
+                <div class="form-field" id="edit-field-identifier">
+                  <label class="field-label" for="edit-f-identifier">API identifier</label>
+                  <input id="edit-f-identifier" name="identifier" type="text"
+                    maxlength="200" autocomplete="off" />
+                </div>
+                <div class="cell-divider" id="edit-divider-identifier"></div>
+                <div class="form-field">
+                  <label class="field-label" for="edit-f-token">API token</label>
+                  <div class="password-wrap">
+                    <input id="edit-f-token" name="token" type="password"
+                      maxlength="2000" autocomplete="new-password" />
+                    <button type="button" class="toggle-pw" id="edit-toggle-pw" aria-label="Show token">
+                      <svg id="edit-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-group">
+              <div class="section-label">SCHEDULE</div>
+              <div class="section-card form-card">
+                <div class="form-field interval-field">
+                  <label class="field-label" for="edit-f-interval">Check interval</label>
+                  <div class="interval-wrap">
+                    <input id="edit-f-interval" name="interval" type="number"
+                      value="300" min="60" max="86400" required />
+                    <span class="interval-unit">seconds</span>
+                  </div>
+                  <span class="field-hint">Minimum 60 s · Recommended 300 s (5 min)</span>
+                </div>
+              </div>
+            </div>
+
+            <input type="hidden" name="conn_index" id="edit-conn-index" />
+            <div id="edit-form-error" class="error-banner hidden" role="alert"></div>
+
+            <div class="bottom-action">
+              <button type="submit" class="main-btn">Save Changes</button>
+            </div>
+          </form>
+        </div><!-- /view-edit -->
+
+
+      </div><!-- /view-root -->
+    </div><!-- /app -->
+
+    <script src="./app.js?v=5" defer></script>
+  </body>
+</html>
