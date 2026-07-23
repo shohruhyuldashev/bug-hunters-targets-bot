@@ -509,6 +509,10 @@ class TelegramNotifier:
                 else:
                     lines.append(f"   <code>{type_short}</code>")
 
+            # Add separator if not the last item
+            if i - (page * PAGE_SIZE + 1) < len(targets) - 1:
+                lines.append("==============================")
+
         # ── Footer ────────────────────────────────────────────────────────────
         if prog_details and "scope_count" in prog_details:
             lines.append("")
@@ -740,11 +744,14 @@ class TelegramNotifier:
         
         # Limit to 15 targets to prevent message too long
         limit = 15
-        for event in events[:limit]:
+        for i, event in enumerate(events[:limit]):
             emoji = _asset_emoji(event.get("asset_type", ""))
             
             asset_type = event.get('asset_type', 'Other')
             lines.append(f"{emoji} <code>{escape(event['identifier'])}</code>\n   <code>{escape(asset_type[:3].upper())}</code>  📂 {escape(asset_type)}")
+            
+            if i < min(len(events), limit) - 1:
+                lines.append("==============================")
             
         if len(events) > limit:
             lines.append(f"\n<i>... va yana {len(events) - limit} ta target topildi. To'liq ro'yxatni ko'rish uchun miniappga kiring.</i>")
